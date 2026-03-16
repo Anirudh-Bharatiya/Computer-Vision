@@ -1,0 +1,66 @@
+Metadata-Version: 2.4
+Name: programming
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: faiss-cpu>=1.13.2
+Requires-Dist: ipykernel>=7.2.0
+Requires-Dist: matplotlib>=3.10.8
+Requires-Dist: numpy>=2.4.3
+Requires-Dist: pandas>=3.0.1
+Requires-Dist: pillow>=12.1.1
+Requires-Dist: scikit-image>=0.26.0
+Requires-Dist: scikit-learn>=1.8.0
+Requires-Dist: scipy>=1.17.1
+Requires-Dist: seaborn>=0.13.2
+Requires-Dist: timm>=1.0.25
+Requires-Dist: torch>=2.0
+Requires-Dist: torchvision>=0.25.0
+Requires-Dist: tqdm>=4.67.3
+Requires-Dist: transformers>=5.3.0
+Requires-Dist: wandb>=0.25.1
+
+# HW1 - Q2 Image Classification (Russian Wildlife)
+
+This repository contains code to reproduce Q2 (Image Classification) for the assignment.
+Run the three required experiments (scratch CNN baseline; ResNet-18 finetune without augmentation; ResNet-18 finetune with augmentation) and the DINOv2/timm feature extraction with t-SNE + KMeans.
+
+Seed used throughout: `2023090`.
+
+## Quick commands (run from repo root)
+
+1. Create splits (if you have dataset folder structure):
+```bash
+python -m src.dataset --root path/to/wildlife_dataset --make-splits --out_csv_dir data/splits --seed 2023090
+
+Plot class distributions (required for Q2.1.c):
+
+python scripts/plot_class_distribution.py
+
+Scratch CNN (10 epochs, baseline, Q2.2):
+
+python -m src.train_scratch --train_csv data/splits/train.csv --val_csv data/splits/val.csv --epochs 10 --batch_size 64 --out_dir outputs/scratch_baseline --wandb --wandb_project "HW1_RussianWildlife" --run_name "scratch_10ep_run"
+
+ResNet-18 finetune without augmentation (Q2.3):
+
+python -m src.train_finetune --train_csv data/splits/train.csv --val_csv data/splits/val.csv --epochs 10 --batch_size 32 --out_dir outputs/resnet_no_aug --wandb --wandb_project "HW1_RussianWildlife" --run_name "resnet18_no_aug"
+
+ResNet-18 finetune with augmentation (Q2.4):
+
+python -m src.train_finetune --train_csv data/splits/train.csv --val_csv data/splits/val.csv --epochs 10 --batch_size 32 --out_dir outputs/resnet_with_aug --wandb --wandb_project "HW1_RussianWildlife" --run_name "resnet18_with_aug" --augment
+
+Feature extraction + PCA->t-SNE + KMeans (Q3.2.d):
+
+python -m src.extract_features --csv data/splits/val.csv --out_dir outputs/features --model dinov2_vits14 --k_clusters 8
+Deliverables for Report
+
+outputs/plots/train_class_dist.png and val_class_dist.png (Q2.1.c)
+
+training curves (W&B or exported PNGs)
+
+confusion matrices and misclassified_grid PNGs for each model
+
+t-SNE plot and cluster examples
+
+augmentation sample images (if running finetune with --augment)
